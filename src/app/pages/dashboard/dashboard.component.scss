@@ -1,0 +1,755 @@
+@mixin card($width: 350px, $height: 80vh) {
+    width: $width;
+    height: $height;
+    border-radius: 15px;
+    padding: 1rem;
+    border: 1px solid var(--topbar-bg);
+    text-align: center;
+    position: relative;
+
+    h2 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+}
+
+
+.container {
+    max-width: 1500px;
+    margin: 0 auto;
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+
+        .logo {
+            img {
+                width: 150px;
+                height: auto;
+            }
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .menu {
+            display: flex;
+            gap: 20px;
+
+            div {
+                background-color: var(--topbar-bg);
+                width: 40px;
+                height: 40px;
+                display: grid;
+                place-content: center;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+
+                &:hover {
+                    background-color: var(--sidebar-bg);
+                }
+
+
+            }
+
+            i {
+                font-size: 20px;
+                color: white;
+            }
+
+        }
+    }
+
+
+    main {
+        width: 100%;
+        height: calc(100vh - 150px);
+        display: flex;
+        gap: 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+
+        .card {
+            @include card();
+
+            &.cliente-card {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                gap: 1rem;
+
+                .filters {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+
+                    .cards-filters {
+                        width: 100%;
+                        overflow-x: hidden;
+                        display: flex;
+                        gap: .5rem;
+
+                        .card-filter {
+                            display: flex;
+                            align-items: center;
+                            gap: .5rem;
+                            cursor: pointer;
+                            flex-shrink: 0;
+                            padding: 5px 10px;
+                            border-radius: 5px;
+                            background-color: rgba($color: #344156, $alpha: 0.3);
+
+                            &.active {
+                                background-color: var(--topbar-bg);
+
+                                span {
+                                    color: #fff;
+                                }
+                            }
+
+                            span {
+                                font-size: 12px;
+                            }
+
+                            .red {
+                                width: 10px;
+                                height: 10px;
+                                background-color: red;
+                                border-radius: 50%;
+                            }
+
+                            .green {
+                                width: 10px;
+                                height: 10px;
+                                background-color: green;
+                                border-radius: 50%;
+                            }
+                        }
+                    }
+
+
+                    .filter {
+                        .p-inputtext {
+                            width: 100% !important;
+                            padding: 5px 10px;
+                            font-size: 14px;
+                            border-radius: 5px;
+                            background-color: transparent;
+                            border: 1px solid var(--topbar-bg);
+                            color: var(--text-main);
+
+                            &::placeholder {
+                                font-size: 12px;
+                                color: var(--text-main);
+                            }
+                        }
+                    }
+
+                }
+
+                .clientes {
+                    height: 80%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    overflow-y: scroll;
+
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .equipamento {
+                        display: flex;
+                        justify-content: space-between;
+                        background-color: rgba($color: #344156, $alpha: 0.3);
+                        color: #000;
+                        border-radius: 5px;
+                        padding: 8px 10px;
+                        align-items: center;
+
+                        .dados {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-start;
+                            gap: .2rem;
+
+                            .nome {
+                                font-size: 14px;
+                                text-align: start;
+                            }
+
+
+                        }
+
+
+                        .btns {
+                            display: flex;
+                            align-items: center;
+                            gap: 1rem;
+
+                            .status {
+                                display: flex;
+
+                                .red {
+                                    width: 10px;
+                                    height: 10px;
+                                    background-color: red;
+                                    border-radius: 50%;
+                                }
+
+                                .green {
+                                    width: 10px;
+                                    height: 10px;
+                                    background-color: green;
+                                    border-radius: 50%;
+                                }
+
+                            }
+
+                            .edit {
+                                width: 30px;
+                                height: 30px;
+                                display: grid;
+                                place-content: center;
+                                border-radius: 50%;
+                                cursor: pointer;
+                                transition: background-color 0.3s ease;
+                                background-color: var(--topbar-bg);
+
+                                i {
+                                    font-size: 14px;
+                                    color: white;
+                                }
+                            }
+                        }
+                    }
+
+                    .cliente {
+                        display: flex;
+                        justify-content: space-between;
+                        background-color: rgba($color: #344156, $alpha: 0.3);
+                        color: #000;
+                        border-radius: 5px;
+                        padding: 8px 10px;
+                        align-items: center;
+
+
+
+                        .dados {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-start;
+                            gap: .2rem;
+
+                            .telefone {
+                                font-size: 12px;
+                            }
+
+
+                        }
+
+                        .edit {
+                            width: 30px;
+                            height: 30px;
+                            display: grid;
+                            place-content: center;
+                            border-radius: 50%;
+                            cursor: pointer;
+                            transition: background-color 0.3s ease;
+                            background-color: var(--topbar-bg);
+
+                            i {
+                                font-size: 14px;
+                                color: white;
+                            }
+                        }
+
+
+
+
+                    }
+                }
+
+                .add-cliente {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    padding: 8px 0;
+                    align-items: center;
+                    background-color: var(--topbar-bg);
+                    color: white;
+                    border-radius: 5px;
+                    cursor: pointer;
+
+
+                    transition: background-color 0.3s ease;
+
+                    &:hover {
+                        background-color: var(--sidebar-bg);
+                    }
+                }
+            }
+        }
+
+        .secound-card {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            height: 100%;
+            @include card();
+            padding: 0;
+            justify-content: space-between;
+            border: none;
+
+            .card {
+                @include card($width: 100%, $height: 350px);
+
+                &.emails {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    gap: 1rem;
+
+                    .emails-list {
+                        height: 110px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: .5rem;
+                        overflow-y: scroll;
+
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
+
+                        .email {
+                            display: flex;
+                            width: 100%;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 5px 10px;
+                            background-color: rgba($color: #344156, $alpha: 0.3);
+                            border-radius: 5px;
+                            cursor: pointer !important;
+
+                            position: relative;
+
+                            .delete {
+                                cursor: pointer;
+                            }
+
+                        }
+                    }
+
+                    .cadastrar-email {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1rem;
+
+                        .form-group {
+                            width: 100%;
+                            display: flex;
+                            gap: .5rem;
+
+                            .p-inputtext {
+                                width: 100% !important;
+                                padding: 5px 10px;
+                                font-size: 14px;
+                                border-radius: 5px;
+                                background-color: transparent;
+                                border: 1px solid var(--topbar-bg);
+                                color: var(--text-main);
+
+                                &::placeholder {
+                                    font-size: 12px;
+                                    color: var(--text-main);
+                                }
+                            }
+                        }
+
+                        button {
+                            padding: 5px 0;
+                            background-color: var(--topbar-bg);
+                            border: none;
+                            color: white;
+                            border-radius: 5px;
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                &.bloquear {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    height: 100%;
+
+
+                    .emailsBlocked {
+                        display: flex;
+                        flex-direction: column;
+                        gap: .5rem;
+                        height: 100px;
+                        overflow-y: scroll;
+
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
+
+                        .email {
+                            display: flex;
+                            width: 100%;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 5px 10px;
+                            background-color: rgba($color: #344156, $alpha: 0.3);
+                            border-radius: 5px;
+
+                            .delete {
+                                cursor: pointer;
+                            }
+
+                        }
+
+
+                    }
+
+                    .form-group {
+                        width: 100%;
+                        display: flex;
+                        gap: .5rem;
+
+                        .p-inputtext {
+                            width: 100% !important;
+                            padding: 5px 10px;
+                            font-size: 14px;
+                            border-radius: 5px;
+                            background-color: transparent;
+                            border: 1px solid var(--topbar-bg);
+                            color: var(--text-main);
+
+                            &::placeholder {
+                                font-size: 12px;
+                                color: var(--text-main);
+                            }
+                        }
+
+                        button {
+                            padding: 5px 10px;
+                            background-color: var(--topbar-bg);
+                            border: none;
+                            color: white;
+                            border-radius: 5px;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+
+        .terceira-card {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+            height: 100%;
+            @include card();
+            padding: 0;
+            justify-content: space-between;
+            border: none;
+
+
+
+            .tag {
+                height: 150px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                gap: 1rem;
+                @include card($width: 100%, $height: 100%);
+
+                .tags-list {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: .5rem;
+                    width: 100%;
+                    height: 150px;
+                    align-items: flex-start;
+                    overflow-y: scroll;
+
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .tagItem {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        text-align: start;
+                        gap: .5rem;
+                        color: var(--topbar-bg);
+                        font-size: 14px;
+                        background-color: rgba($color: #344156, $alpha: 0.3);
+
+                        border-radius: 5px;
+                        padding: 5px 10px;
+
+                        i {
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .form-group {
+                    width: 100%;
+                    display: flex;
+                    gap: .5rem;
+
+                    .p-inputtext {
+                        width: 100% !important;
+                        padding: 5px 10px;
+                        font-size: 14px;
+                        border-radius: 5px;
+                        background-color: transparent;
+                        border: 1px solid var(--topbar-bg);
+                        color: var(--text-main);
+
+                        &::placeholder {
+                            font-size: 12px;
+                            color: var(--text-main);
+                        }
+                    }
+
+                    button {
+                        padding: 5px 10px;
+                        background-color: var(--topbar-bg);
+                        border: none;
+                        color: white;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .card {
+                @include card($width: 100%, $height: 100%);
+            }
+        }
+    }
+
+    .edits-card {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        @include card();
+        padding: 0;
+        justify-content: space-between;
+        border: none;
+
+
+
+        .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+
+            .header {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+            }
+
+            .content {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+                height: 100%;
+
+                .conectar-whatsapp {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 1rem;
+                    cursor: pointer;
+                    background-color: var(--topbar-bg);
+                    padding: 10px;
+                    border-radius: 5px;
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+}
+
+
+::ng-deep .p-dialog {
+    width: 30vw !important;
+    background-color: white !important;
+    color: black !important;
+
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .p-inputtext {
+        width: 100% !important;
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        background-color: transparent;
+        border: 1px solid var(--topbar-bg);
+        color: var(--text-main);
+        flex: 1;
+
+        &::placeholder {
+            font-size: 12px;
+            color: var(--text-main);
+        }
+    }
+
+    .createTag {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        justify-content: space-between;
+
+        .p-inputtext {
+            width: 100% !important;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            background-color: transparent;
+            border: 1px solid var(--topbar-bg);
+            color: var(--text-main);
+            flex: 1;
+
+            &::placeholder {
+                font-size: 12px;
+                color: var(--text-main);
+            }
+        }
+
+
+        button {
+            // width: 100% !important;
+            padding: 5px 20px !important;
+            background-color: var(--topbar-bg);
+            border: none;
+            color: white;
+            font-size: 14px;
+
+            border-radius: 5px;
+            cursor: pointer;
+
+            &:disabled {
+                background-color: rgba($color: #344156, $alpha: .5);
+            }
+
+        }
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+
+        .warning {
+            font-size: 12px;
+            color: red;
+        }
+
+        &.buttons {
+            display: flex;
+            flex-direction: row;
+            gap: .5rem;
+            justify-content: space-between;
+            align-items: center;
+
+            button {
+                width: 100%;
+                padding: 10px 0;
+                background-color: var(--topbar-bg);
+                border: none;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+
+                &:disabled {
+                    background-color: rgba($color: #344156, $alpha: .5);
+                }
+
+                &.delete {
+                    border: 1px solid var(--topbar-bg);
+                    background-color: transparent;
+                    color: var(--topbar-bg);
+                }
+            }
+        }
+
+
+
+    }
+
+    .palavras-chave {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        padding-top: 20px;
+
+        h2 {
+            font-size: 16px;
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 150px;
+            gap: .5rem;
+            align-items: flex-start;
+            overflow-y: scroll;
+            background-color: rgba($color: #344156, $alpha: .1);
+            border-radius: 5px;
+            padding: .5rem;
+
+
+            &::-webkit-scrollbar {
+                display: none;
+
+            }
+
+
+            .tagItem {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: start;
+                gap: .5rem;
+                color: white;
+                font-size: 14px;
+                background-color: rgba($color: #344156, $alpha: 1);
+
+                border-radius: 5px;
+                padding: 5px 10px;
+
+                i {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

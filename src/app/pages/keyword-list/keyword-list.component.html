@@ -1,0 +1,54 @@
+<div class="layout">
+  <!-- sidebar esquerda -->
+
+
+  <!-- área principal -->
+  <div class="main">
+    <!-- header -->
+    <header class="topbar">
+      <h1>Tags</h1>
+    </header>
+
+    <!-- conteúdo -->
+    <div class="content">
+ 
+
+      <!-- sidebar direita com widgets -->
+      <aside class="widgets">
+        <!-- Keywords -->
+        <div class="widget keywords">
+          <h3>Informações</h3>
+          <div class="tags">
+            <span class="tag" *ngFor="let kw of keywords">
+              {{ kw }}
+              <i class="fa-solid fa-x remove" (click)="removeKeyword(kw)"></i>
+            </span>
+          </div>
+
+          <div class="line"></div>
+          <div class="form-group">
+            <input type="text" placeholder="Nova tag" [(ngModel)]="newKeyword">
+            <button (click)="addKeyword()">Adicionar</button>
+          </div>
+        </div>
+
+        <!-- Alerta resumo -->
+        <div class="widget summary">
+          <h3>Resumo de Alertas</h3>
+          <ul>
+            <li *ngFor="let item of stats | keyvalue">
+              <strong>{{ item.value }}</strong> {{ item.key }}
+            </li>
+            <li *ngIf="!(stats | keyvalue).length">
+              Sem alertas recebidos
+            </li>
+          </ul>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+
+<app-slidebar-mobile></app-slidebar-mobile>

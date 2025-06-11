@@ -1,0 +1,244 @@
+<div class="container">
+  <header>
+    <div class="logo">
+      <img src="https://pwmenergia.com.br/wp-content/uploads/2023/09/Logo-principal-header.png" alt="logo-pwm">
+    </div>
+    <h1>Painel de Monitoramento</h1>
+    <div class="menu">
+      <div class="notification" (click)="onNotifyClick()">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <div class="user">
+        <i class="fa-solid fa-user"></i>
+      </div>
+    </div>
+  </header>
+
+
+  <main>
+    <div class="edits-card">
+      <div class="card">
+        <div class="header">
+          <h2>Conectar whatsapp</h2>
+        </div>
+
+        <div class="content">
+          <div class="qrcode">
+            <!-- Botão visível se ainda não foi exibido o QRCode -->
+            <div class="conectar-whatsapp" *ngIf="!showQrCode && !isReady" (click)="conectarWhatsapp()">
+              <i class="fa-solid fa-qrcode"></i>
+              <span>Conectar whatsapp</span>
+            </div>
+        
+            <!-- QR Code visível enquanto não estiver pronto -->
+            <div *ngIf="showQrCode && !isReady">
+              <img [src]="qrCode" />
+            </div>
+        
+            <!-- Texto de conectado visível quando isReady for true -->
+            <div *ngIf="isReady">
+              ✅ Conectado
+            </div>
+          </div>
+        </div>
+        
+
+
+      </div>
+      <!-- <div class="card">
+        <div class="header">
+          <h2>Mapa</h2>
+        </div> -->
+      <!-- </div> -->
+    </div>
+
+    <div class="terceira-card">
+      <div class="tag">
+        <h2>Add tag</h2>
+        <div class="tags-list">
+          <div class="tagItem" *ngFor="let tag of keywords">
+            <span>{{tag}}</span>
+            <i class="fa-solid fa-circle-xmark" (click)="removeKeyword(tag)"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="text" [(ngModel)]="newKeyword" placeholder="Digite uma palavra para mostrar alertas" pInputText
+            (keydown.enter)="addKeyword()">
+          <button (click)="addKeyword()">Criar</button>
+        </div>
+      </div>
+
+      <div class="tag">
+        <h2>Bloquear Tag</h2>
+        <div class="tags-list">
+          <div class="tagItem" *ngFor="let tag of blockTags">
+            <span>{{tag}}</span>
+            <i class="fa-solid fa-circle-xmark" (click)="removeTagBlocked(tag)"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input type="text" placeholder="Palavra para bloquear" [(ngModel)]="newTagBlocked" pInputText
+            (keydown.enter)="addTagBlocked()">
+          <button (click)="addTagBlocked()">Bloquear</button>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="secound-card">
+      <div class="emails card">
+        <h2>Emails</h2>
+        <div class="emails-list">
+          <div class="email" *ngFor="let email of emails">
+            <span class="email-name" (click)="showEmailDialog(email)">{{email.email}}</span>
+            <div class="delete">
+              <i class="fa-solid fa-circle-xmark" (click)="removeEmail(email.email)"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="cadastrar-email">
+          <div class="form-group">
+            <input type="text" placeholder="Email" pInputText [(ngModel)]="newEmail.email">
+          </div>
+          <div class="form-group">
+            <input type="text" placeholder="Senha" pInputText [(ngModel)]="newEmail.senha">
+            <input type="text" pInputText placeholder="Chat id" [(ngModel)]="newEmail.chatId">
+          </div>
+          <button (click)="addEmail()">Cadastrar</button>
+        </div>
+      </div>
+
+
+
+      <div class="bloquear card">
+        <h2>Bloquear e-mails</h2>
+
+        <div class="emailsBlocked">
+          <div class="email" *ngFor="let email of remetentes">
+            <span class="email-name">{{email}}</span>
+            <div class="delete">
+              <i class="fa-solid fa-circle-xmark" (click)="unblockEmail(email)"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input type="text" placeholder="Email" [(ngModel)]="emailBlocked" pInputText>
+          <button (click)="blockEmail()">Bloquear</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card cliente-card">
+      <h2>Contratos</h2>
+      <div class="filters">
+        <div class="filter">
+          <input type="text" placeholder="Pesquisar por nome, telefone ou endereço" pInputText [(ngModel)]="searchTerm">
+        </div>
+      </div>
+      <div class="clientes">
+        <div class="cliente" *ngFor="let cliente of filteredClients; let i = index">
+
+          <div class="dados">
+            <div class="nome">{{cliente.nome}}</div>
+            <div class="telefone">
+              {{formatarTelefone(cliente.telefone)}}
+            </div>
+          </div>
+
+
+
+          <div class="btns">
+            <div class="edit" (click)="editClient(cliente, i)">
+              <i class="fa-solid fa-pencil"></i>
+            </div>
+          </div>
+        </div>
+        <span style="font-size: 14px;" *ngIf="filteredClients.length === 0">Nenhum cliente encontrado</span>
+      </div>
+      <div class="add-cliente" (click)="displayCriarCliente = true">
+        Criar novo
+      </div>
+    </div>
+
+  
+
+
+  </main>
+</div>
+
+
+
+<!-- Dialog de detalhes -->
+<p-dialog header="Detalhes do E-mail" [(visible)]="displayEmailDialog" modal="true" [style]="{ width: '350px' }"
+  (onHide)="displayEmailDialog = false">
+  <div *ngIf="selectedEmail" class="dialog-content">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="text" placeholder="Grupo" pInputText [(ngModel)]="selectedEmail.email">
+
+    </div>
+    <div class="form-group">
+      <label for="groupName">Grupo</label>
+      <input type="text" placeholder="" pInputText [(ngModel)]="selectedEmail.groupName">
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog [header]="dialogHeader" [(visible)]="displayCriarCliente" modal="true" [style]="{ width: '350px' }"
+  (onHide)="onDialogHide()" class="dialog-cliente">
+
+  <form [formGroup]="clientForm" (ngSubmit)="createContrato()">
+    <div class="dialog-content">
+      <div class="form-group">
+        <label for="nome">Nome do cliente</label>
+        <input id="nome" type="text" pInputText formControlName="nome" placeholder="Digite o nome do cliente">
+      </div>
+      <div class="form-group">
+        <label for="telefone">Telefone</label>
+        <input id="telefone" type="text" pInputText formControlName="telefone" mask="(00) 00000-0000"
+          placeholder="Digite o número de telefone">
+        <span class="warning">* Esse número deve ser igual ao que chega no e-mail *</span>
+      </div>
+      <!-- <div class="form-group">
+        <label for="endereco">Endereço</label>
+        <input id="endereco" type="text" pInputText formControlName="endereco" placeholder="Digite o endereço">
+      </div> -->
+
+      <!-- Seção de Tags -->
+      <div class="palavras-chave">
+        <h2>Palavras-chave</h2>
+
+        <!-- Lista de tags atuais -->
+        <div class="tags-list">
+          <div class="tagItem" *ngFor="let t of tags; let i = index">
+            <span>{{ t }}</span>
+            <i class="fa-solid fa-circle-xmark" (click)="removeTag(i)"></i>
+          </div>
+        </div>
+
+        <!-- Input para nova tag -->
+        <div class="createTag">
+          <input type="text" pInputText placeholder="Digite uma palavra-chave" [(ngModel)]="newTag" name="newTag"
+            (keydown.enter)="addTag(); $event.preventDefault()" [ngModelOptions]="{standalone: true}">
+          <button type="button" (click)="addTag()">Add tag</button>
+        </div>
+      </div>
+
+      <!-- Botão Criar -->
+      <div class="form-group buttons">
+        <button (click)="deleteContrato()" *ngIf="editingIndex > -1" class="delete">Deletar</button>
+        <button type="submit" label="Criar" [disabled]="clientForm.invalid"> {{ editingIndex > -1 ? 'Salvar' : 'Criar
+          cliente' }}</button>
+      </div>
+
+    </div>
+  </form>
+</p-dialog>
+
+
+<app-notifys [visible]="showNotify" (closeNotify)="onCloseNotify()"></app-notifys>

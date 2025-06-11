@@ -1,0 +1,18 @@
+.container-notify {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 340px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(0, 0, 0);
+    z-index: 9999;
+
+    transform: translateX(100%); /* Começa fora da tela */
+    transition: transform 10s ease-in-out; /* Suavidade */
+
+    &.open {
+        transform: translateX(0); /* Entra na tela */
+    }
+}

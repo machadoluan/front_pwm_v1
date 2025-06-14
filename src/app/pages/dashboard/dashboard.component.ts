@@ -17,6 +17,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { ContratosService } from '../../services/contratos.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from '../../services/toastr.service';
+import { environment } from '../../../environments/environment';
 interface EmailWithGroup {
   email: string;
   chatId: string;
@@ -72,6 +73,7 @@ export class DashboardComponent implements OnInit {
   emailBlocked: string = '';
 
   private lastAlertCount = 0;
+  private whatasppApi = environment.apiWhatsapp
 
   constructor(
     private alertClient: AlertClientService,
@@ -482,7 +484,7 @@ export class DashboardComponent implements OnInit {
     this.showQrCode = true;
 
     this.polling = setInterval(() => {
-      this.http.get('http://localhost:3000/whatsapp/qr-code', { responseType: 'text' }).subscribe({
+      this.http.get(`${this.whatasppApi}/whatsapp/qr-code`, { responseType: 'text' }).subscribe({
         next: (res: any) => {
           try {
             const data = JSON.parse(res);
@@ -501,7 +503,7 @@ export class DashboardComponent implements OnInit {
   }
 
   verificarStatus() {
-    this.http.get('http://localhost:3000/whatsapp/qr-code', { responseType: 'text' }).subscribe({
+    this.http.get(`${this.whatasppApi}/whatsapp/qr-code`, { responseType: 'text' }).subscribe({
       next: (res: any) => {
         try {
           const data = JSON.parse(res);

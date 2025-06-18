@@ -600,7 +600,159 @@
         justify-content: space-between;
         border: none;
 
+        .emails-groups {
+            flex: 1;
 
+            .clientes {
+                height: 80%;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                overflow-y: scroll;
+
+                @media screen and (max-width: 840px) {
+                    height: 300px;
+                }
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .equipamento {
+                    display: flex;
+                    justify-content: space-between;
+                    background-color: rgba($color: #344156, $alpha: 0.3);
+                    color: #000;
+                    border-radius: 5px;
+                    padding: 8px 10px;
+                    align-items: center;
+
+                    .dados {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: .2rem;
+
+                        .nome {
+                            font-size: 14px;
+                            text-align: start;
+                        }
+
+
+                    }
+
+
+                    .btns {
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+
+                        .status {
+                            display: flex;
+
+                            .red {
+                                width: 10px;
+                                height: 10px;
+                                background-color: red;
+                                border-radius: 50%;
+                            }
+
+                            .green {
+                                width: 10px;
+                                height: 10px;
+                                background-color: green;
+                                border-radius: 50%;
+                            }
+
+                        }
+
+                        .edit {
+                            width: 30px;
+                            height: 30px;
+                            display: grid;
+                            place-content: center;
+                            border-radius: 50%;
+                            cursor: pointer;
+                            transition: background-color 0.3s ease;
+                            background-color: var(--topbar-bg);
+
+                            i {
+                                font-size: 14px;
+                                color: white;
+                            }
+                        }
+                    }
+                }
+
+                .cliente {
+                    display: flex;
+                    justify-content: space-between;
+                    background-color: rgba($color: #344156, $alpha: 0.3);
+                    color: #000;
+                    border-radius: 5px;
+                    padding: 8px 10px;
+                    align-items: center;
+
+
+
+                    .dados {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: .2rem;
+
+                        .telefone {
+                            font-size: 12px;
+                        }
+
+
+                    }
+
+                    .edit {
+                        width: 30px;
+                        height: 30px;
+                        display: grid;
+                        place-content: center;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        transition: background-color 0.3s ease;
+                        background-color: var(--topbar-bg);
+
+                        i {
+                            font-size: 14px;
+                            color: white;
+                        }
+                    }
+
+
+
+
+                }
+            }
+
+            .add-cliente {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                padding: 8px 0;
+                align-items: center;
+                background-color: var(--topbar-bg);
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+
+
+                transition: background-color 0.3s ease;
+
+                &:hover {
+                    background-color: var(--sidebar-bg);
+                }
+            }
+        }
+
+        .qr-code {
+            flex: .5;
+        }
 
         .card {
             height: 100%;
@@ -624,12 +776,13 @@
                 align-items: center;
                 padding: 10px;
                 height: 100%;
+
                 @media screen and (max-width: 840px) {
-                    #qr-code{
+                    #qr-code {
                         width: 220px;
                     }
                 }
-             
+
                 .conectar-whatsapp {
                     display: flex;
                     justify-content: center;
@@ -669,6 +822,12 @@
         border: 1px solid var(--topbar-bg);
         color: var(--text-main);
         flex: 1;
+
+        &:disabled {
+            background-color: rgba($color: #344156, $alpha: .1);
+            border: transparent !important;
+            color: var(--text-main);
+        }
 
         &::placeholder {
             font-size: 12px;
@@ -806,5 +965,40 @@
                 }
             }
         }
+    }
+}
+
+::ng-deep .dialog-whats {
+    width: 60% !important;
+
+    .qr-container {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+
+        .etapas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+
+            ol {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    }
+}
+
+.groupTelegram {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: .5rem;
+
+    .form-group {
+        flex: 1;
+
     }
 }

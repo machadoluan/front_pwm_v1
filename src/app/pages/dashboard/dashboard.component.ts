@@ -18,6 +18,9 @@ import { ContratosService } from '../../services/contratos.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from '../../services/toastr.service';
 import { environment } from '../../../environments/environment';
+import { EmailGrupsService } from '../../services/email-grups.service';
+import { CreateEmailGroupDto } from '../../../EmailGroups.dto';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 interface EmailWithGroup {
   email: string;
   chatId: string;
@@ -45,15 +48,20 @@ export class DashboardComponent implements OnInit {
   displayEmailDialog = false;
   selectedEmail!: EmailWithGroup;
   displayCriarCliente: boolean = false;
+  displayCriarEmailGroup: boolean = false;
   displayCriarEquipamento: boolean = false;
   editclient: Client | null = null;
+  editEmailGroup: CreateEmailGroupDto | null = null;
   clientForm: FormGroup;
+  emailGroupForm: FormGroup;
   tags: string[] = [];
+  tagsEmail: string[] = [];
   editingIndex = -1;
   newTag = '';
   showNotify = false;
   filterStatus: boolean | null = null;
   searchTerm: string = '';
+  searchTermEmails: string = '';
   searchTermEquipamentos: string = '';
   status: { qrCode?: string; isReady?: boolean } = {};
   polling: any;
@@ -64,6 +72,8 @@ export class DashboardComponent implements OnInit {
   qrCode: string = '';
   showQrCode: boolean = false
   isReady: boolean = false
+  displayDialog: boolean = false;
+  GroupsEmails: CreateEmailGroupDto[] = []
 
   newEmail: AddEmailDto = {
     email: '',
@@ -82,12 +92,20 @@ export class DashboardComponent implements OnInit {
     private telegramService: TelegramService,
     private fb: FormBuilder,
     private contratosService: ContratosService,
+    private emailGrupsService: EmailGrupsService,
     private http: HttpClient,
     private toastrService: ToastrService
   ) {
     this.clientForm = this.fb.group({
       nome: ['', Validators.required],
       telefone: ['', [Validators.required, Validators.pattern(/^\d{10,11}$/)]],
+      // endereco: ['', Validators.required]
+    });
+
+    this.emailGroupForm = this.fb.group({
+      name: ['', Validators.required],
+      chatId: ['', [Validators.required, Validators.pattern(/^-?\d{7,15}$/)]],
+      groupName: [{ value: '', disabled: true }, Validators.required]
       // endereco: ['', Validators.required]
     });
 
@@ -106,6 +124,7 @@ export class DashboardComponent implements OnInit {
     this.loadEmail();
     this.loadContratos();
     this.loadEmailBlocked();
+    this.loadGroupsEmail();
     this.verificarStatus()
     this.kwClient.getKeywordsBlocked().subscribe({
       next: (data: any[]) => {
@@ -132,6 +151,27 @@ export class DashboardComponent implements OnInit {
         });
       }
     }
+
+    this.emailGroupForm.get('chatId')?.valueChanges
+      .pipe(
+        debounceTime(500), // evita chamadas a cada tecla
+        distinctUntilChanged()
+      )
+      .subscribe(chatId => {
+        this.telegramService.getChatInfo(chatId).subscribe({
+          next: res => {
+            this.emailGroupForm.patchValue({
+              groupName: res.result?.title
+            });
+          },
+          error: err => {
+            console.error('Erro ao obter info do grupo:', err);
+            this.emailGroupForm.patchValue({
+              groupName: 'Grupo ou chat inválido!'
+            });
+          }
+        });
+      });
   }
 
   onNotifyClick() {
@@ -354,16 +394,55 @@ export class DashboardComponent implements OnInit {
     this.newTag = '';
   }
 
+  editGroup(email: CreateEmailGroupDto, index: number) {
+    this.editEmailGroup = email;
+    console.log(this.editEmailGroup);
+
+    this.editingIndex = index;
+    // abre diálogo
+    this.displayCriarEmailGroup = true;
+
+    this.telegramService.getChatInfo(email.chatId).subscribe({
+      next: res => {
+        this.emailGroupForm.patchValue({
+          groupName: res.result?.title
+        });
+      },
+      error: err => {
+        console.error('Erro ao obter info do grupo:', err);
+      }
+    });
+
+    // preenche apenas os controles existentes
+    this.emailGroupForm.patchValue({
+      name: email.name,
+      chatId: email.chatId
+    });
+
+    // carrega as tags no array de edição
+    this.tagsEmail = [...email.keywords];
+
+    // limpa o campo de nova tag
+    this.newTag = '';
+  }
+
   openDialog() {
     this.displayCriarCliente = true;
   }
 
+  openDialogEmail() {
+    this.displayCriarEmailGroup = true;
+  }
+
   onDialogHide() {
     this.clientForm.reset();
+    this.emailGroupForm.reset();
+
     this.tags = [];
+    this.tagsEmail = [];
     this.newTag = '';
     this.editclient = null;
-    console.log(this.editclient);
+    this.editEmailGroup = null;
   }
 
   addTag() {
@@ -374,9 +453,20 @@ export class DashboardComponent implements OnInit {
     this.newTag = '';
   }
 
+  addTagEmail() {
+    const tag = this.newTag.trim();
+    if (tag && !this.tagsEmail.includes(tag)) {
+      this.tagsEmail.push(tag);
+    }
+    this.newTag = '';
+  }
+
   // Remove tag pelo índice
   removeTag(index: number) {
     this.tags.splice(index, 1);
+  }
+  removeTagEmail(index: number) {
+    this.tagsEmail.splice(index, 1);
   }
 
   createClient() {
@@ -413,6 +503,13 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  loadGroupsEmail() {
+    this.emailGrupsService.getEmails().subscribe((emails) => {
+      this.GroupsEmails = emails;
+      console.log(this.GroupsEmails)
+    });
+  }
+
   createContrato() {
     const payload: Client = {
       ...this.clientForm.value,
@@ -443,6 +540,36 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  createEmailGroup() {
+    const payload: CreateEmailGroupDto = {
+      ...this.emailGroupForm.value,
+      keywords: [...this.tagsEmail],
+      sinal: false
+    };
+
+    if (this.editingIndex > -1) {
+      this.emailGrupsService.updateEmail(this.editEmailGroup?.id!, payload).subscribe(() => {
+        this.loadGroupsEmail();
+        this.emailGroupForm.reset();
+        this.tagsEmail = [];
+        this.editingIndex = -1;
+        this.displayCriarEmailGroup = false;
+        this.editclient = null;
+      });
+    }
+    else {
+      this.emailGrupsService.createEmail(payload).subscribe((contrato) => {
+        console.log(contrato);
+        this.loadGroupsEmail();
+        this.emailGroupForm.reset();
+        this.tagsEmail = [];
+        this.editingIndex = -1;
+        this.displayCriarEmailGroup = false;
+        this.editclient = null;
+      });
+    }
+  }
+
 
 
   deleteContrato() {
@@ -456,6 +583,19 @@ export class DashboardComponent implements OnInit {
       this.displayCriarCliente = false;
       this.editclient = null;
       this.editclient = null;
+    });
+  }
+
+  deleteEmail() {
+    console.log(this.editclient);
+
+    this.emailGrupsService.deleteEmail(this.editEmailGroup?.id!).subscribe((contrato) => {
+      this.loadEmail();
+      this.emailGroupForm.reset();
+      this.tagsEmail = [];
+      this.editingIndex = -1;
+      this.displayCriarEmailGroup = false;
+      this.editEmailGroup = null;
     });
   }
 
@@ -473,7 +613,24 @@ export class DashboardComponent implements OnInit {
     return lista;
   }
 
+  get filteredGroups(): CreateEmailGroupDto[] {
+    let lista = this.GroupsEmails;
+    if (this.searchTermEmails && this.searchTermEmails.trim() !== '') {
+      const termoEmMinusculas = this.searchTermEmails.trim().toLowerCase();
+      lista = lista.filter(c =>
+        // supondo que o campo seja `c.nome`
+        c.name.toLowerCase().includes(termoEmMinusculas) ||
+        c.chatId.toLowerCase().includes(termoEmMinusculas)
+      );
+    }
+    return lista;
+  }
 
+
+  openDialogWhats() {
+    this.displayDialog = true;
+    this.conectarWhatsapp();
+  }
 
   conectarWhatsapp() {
     if (this.polling) {
@@ -483,7 +640,7 @@ export class DashboardComponent implements OnInit {
     this.status = {};
     this.showQrCode = true;
 
-    this.polling = setInterval(() => {
+    const fetchQRCode = () => {
       this.http.get(`${this.whatasppApi}/whatsapp/qr-code`, { responseType: 'text' }).subscribe({
         next: (res: any) => {
           try {
@@ -491,16 +648,28 @@ export class DashboardComponent implements OnInit {
             this.qrCode = data.qrCode;
             this.isReady = data.isReady;
 
-            if (this.isReady) {
+            if (this.isReady && this.polling) {
               clearInterval(this.polling);
+              this.displayDialog = false;
+
             }
           } catch (error) {
             console.error('Erro ao interpretar JSON do servidor', error);
           }
+        },
+        error: err => {
+          console.error('Erro na requisição QR Code:', err);
         }
       });
-    }, 1000);
+    };
+
+    // 🔹 Requisição imediata
+    fetchQRCode();
+
+    // 🔁 Depois continua com o polling a cada 1 segundo
+    this.polling = setInterval(fetchQRCode, 1000);
   }
+
 
   verificarStatus() {
     this.http.get(`${this.whatasppApi}/whatsapp/qr-code`, { responseType: 'text' }).subscribe({

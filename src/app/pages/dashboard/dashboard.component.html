@@ -17,39 +17,52 @@
 
   <main>
     <div class="edits-card">
-      <div class="card">
+      <div class="card emails-groups">
         <div class="header">
-          <h2>Conectar whatsapp</h2>
+          <h2>Grupos especificos</h2>
+        </div>
+
+        <div class="clientes">
+          <div class="cliente" *ngFor="let emails of filteredGroups; let i = index">
+
+            <div class="dados">
+              <div class="nome">{{emails.name}}</div>
+            </div>
+
+
+
+            <div class="btns">
+              <div class="edit" (click)="editGroup(emails, i)">
+                <i class="fa-solid fa-pencil"></i>
+              </div>
+            </div>
+          </div>
+          <span style="font-size: 14px;" *ngIf="filteredClients.length === 0">Nenhum cliente encontrado</span>
+        </div>
+        <div class="add-cliente" (click)="displayCriarEmailGroup = true">
+          Criar novo
+        </div>
+      </div>
+
+      <div class="card qr-code">
+        <div class="header">
+          <h2>Conectar WhatsApp</h2>
         </div>
 
         <div class="content">
-          <div class="qrcode">
-            <!-- Botão visível se ainda não foi exibido o QRCode -->
-            <div class="conectar-whatsapp" *ngIf="!showQrCode && !isReady" (click)="conectarWhatsapp()">
-              <i class="fa-solid fa-qrcode"></i>
-              <span>Conectar whatsapp</span>
-            </div>
-        
-            <!-- QR Code visível enquanto não estiver pronto -->
-            <div *ngIf="showQrCode && !isReady">
-              <img id="qr-code" [src]="qrCode" />
-            </div>
-        
-            <!-- Texto de conectado visível quando isReady for true -->
-            <div *ngIf="isReady">
-              ✅ Conectado
-            </div>
+          <!-- Mostrar botão se ainda não conectado -->
+          <div class="conectar-whatsapp" *ngIf="!isReady" (click)="openDialogWhats()">
+            <i class="fa-solid fa-qrcode"></i>
+            <span>Conectar WhatsApp</span>
+          </div>
+
+          <!-- Mostrar mensagem se já estiver conectado -->
+          <div *ngIf="isReady">
+            ✅ Conectado
           </div>
         </div>
-        
-
-
       </div>
-      <!-- <div class="card">
-        <div class="header">
-          <h2>Mapa</h2>
-        </div> -->
-      <!-- </div> -->
+
     </div>
 
     <div class="terceira-card">
@@ -140,6 +153,7 @@
           <input type="text" placeholder="Pesquisar por nome, telefone ou endereço" pInputText [(ngModel)]="searchTerm">
         </div>
       </div>
+
       <div class="clientes">
         <div class="cliente" *ngFor="let cliente of filteredClients; let i = index">
 
@@ -165,7 +179,7 @@
       </div>
     </div>
 
-  
+
 
 
   </main>
@@ -238,6 +252,87 @@
 
     </div>
   </form>
+</p-dialog>
+
+<p-dialog [header]="dialogHeader" [(visible)]="displayCriarEmailGroup" modal="true" [style]="{ width: '350px' }"
+  (onHide)="onDialogHide()" class="dialog-cliente">
+
+  <form [formGroup]="emailGroupForm" (ngSubmit)="createEmailGroup()">
+    <div class="dialog-content">
+      <div class="form-group">
+        <label for="nome">Nome do cliente</label>
+        <input id="nome" type="text" pInputText formControlName="name" placeholder="Digite o nome do cliente">
+      </div>
+      <div class="groupTelegram">
+        <div class="form-group">
+          <label for="telefone">Group Id</label>
+          <input id="nome" type="text" pInputText formControlName="chatId" placeholder="Digite o chat id do telegram.">
+        </div>
+        <div class="form-group">
+          <label for="telefone">Nome grupo</label>
+          <input id="nome" type="text" pInputText formControlName="groupName" >
+        </div>
+      </div>
+
+      <!-- Seção de Tags -->
+      <div class="palavras-chave">
+        <h2>Palavras-chave</h2>
+
+        <!-- Lista de tags atuais -->
+        <div class="tags-list">
+          <div class="tagItem" *ngFor="let t of tagsEmail; let i = index">
+            <span>{{ t }}</span>
+            <i class="fa-solid fa-circle-xmark" (click)="removeTagEmail(i)"></i>
+          </div>
+        </div>
+
+        <!-- Input para nova tag -->
+        <div class="createTag">
+          <input type="text" pInputText placeholder="Digite uma palavra-chave" [(ngModel)]="newTag" name="newTag"
+            (keydown.enter)="addTagEmail(); $event.preventDefault()" [ngModelOptions]="{standalone: true}">
+          <button type="button" (click)="addTagEmail()">Add tag</button>
+        </div>
+      </div>
+
+      <!-- Botão Criar -->
+      <div class="form-group buttons">
+        <button (click)="deleteEmail()" *ngIf="editingIndex > -1" class="delete">Deletar</button>
+        <button type="submit" label="Criar" [disabled]="emailGroupForm.invalid || !emailGroupForm.get('groupName')?.value"> {{ editingIndex > -1 ? 'Salvar' :
+          'Criar
+          cliente' }}</button>
+      </div>
+
+    </div>
+  </form>
+</p-dialog>
+
+
+<p-dialog header="Escaneie o QR Code" [(visible)]="displayDialog" [modal]="true" [closable]="true"
+  [style]="{width: '700px'}" styleClass="dialog-whats">
+  <div class="qr-container">
+
+    <!-- Etapas para acessar -->
+    <div style="flex: 1;" class="etapas">
+      <ol style="padding-left: 20px;">
+        <li>Abra o <strong>WhatsApp</strong> 📱 no seu celular.</li>
+        <li>Toque em <strong>Mais opções</strong> ⋮ no Android ou em <strong>Configurações</strong> ⚙️ no iPhone.</li>
+        <li>Toque em <strong>Dispositivos conectados</strong> e, em seguida, em <strong>Conectar dispositivo</strong>.
+        </li>
+        <li>Escaneie o QR code para confirmar.</li>
+      </ol>
+
+    </div>
+
+    <!-- QR Code -->
+    <div *ngIf="!isReady" style="flex-shrink: 0;">
+      <img id="qr-code" [src]="qrCode" alt="QR Code" style="width: 250px; height: 250px;" />
+    </div>
+
+    <div *ngIf="isReady">
+      ✅ Conectado com sucesso!
+    </div>
+
+  </div>
 </p-dialog>
 
 

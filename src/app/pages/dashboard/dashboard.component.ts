@@ -21,6 +21,7 @@ import { environment } from '../../../environments/environment';
 import { EmailGrupsService } from '../../services/email-grups.service';
 import { CreateEmailGroupDto } from '../../../EmailGroups.dto';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { EquipamentosService } from '../../services/equipamentos.service';
 interface EmailWithGroup {
   email: string;
   chatId: string;
@@ -75,6 +76,7 @@ export class DashboardComponent implements OnInit {
   displayDialog: boolean = false;
   GroupsEmails: CreateEmailGroupDto[] = []
 
+
   newEmail: AddEmailDto = {
     email: '',
     senha: '',
@@ -94,7 +96,9 @@ export class DashboardComponent implements OnInit {
     private contratosService: ContratosService,
     private emailGrupsService: EmailGrupsService,
     private http: HttpClient,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private equipamentoService: EquipamentosService
+
   ) {
     this.clientForm = this.fb.group({
       nome: ['', Validators.required],
@@ -125,7 +129,8 @@ export class DashboardComponent implements OnInit {
     this.loadContratos();
     this.loadEmailBlocked();
     this.loadGroupsEmail();
-    this.verificarStatus()
+    this.verificarStatus();
+    this.listEquipamentos();
     this.kwClient.getKeywordsBlocked().subscribe({
       next: (data: any[]) => {
         this.blockTags = data;
@@ -626,6 +631,28 @@ export class DashboardComponent implements OnInit {
     return lista;
   }
 
+  get filteredEquipamentos(): any[] {
+    let lista = this.equipamentos;
+
+    if (this.filterStatus !== null) {
+      lista = lista.filter(c => {
+        const statusBoolean = c.status === 'online';
+        return statusBoolean === this.filterStatus;
+      });
+    }
+
+    if (this.searchTermEquipamentos && this.searchTermEquipamentos.trim() !== '') {
+      const termoEmMinusculas = this.searchTermEquipamentos.trim().toLowerCase();
+      lista = lista.filter(c =>
+        c.nome.toLowerCase().includes(termoEmMinusculas) ||
+        c.localidade.toLowerCase().includes(termoEmMinusculas) ||
+        c.ip.toLowerCase().includes(termoEmMinusculas)
+      );
+    }
+
+    return lista;
+  }
+
 
   openDialogWhats() {
     this.displayDialog = true;
@@ -688,6 +715,13 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  listEquipamentos() {
+    this.equipamentoService.getList().subscribe({
+      next: (res) => {
+        this.equipamentos = res
+      }
+    })
+  }
 
   toggleSemSinal() {
     this.filterStatus = this.filterStatus === false ? null : false;
@@ -699,5 +733,15 @@ export class DashboardComponent implements OnInit {
     console.log('Filtro com sinal:', this.filterStatus);
   }
 
+  editEquipamento(equipamento: any, index: number) {
+    this.editEquipamento = equipamento;
+    this.editingIndexEquipamento = index;
+    this.displayCriarEquipamento = true;
 
+    this.equipamentoForm.patchValue({
+      nome: equipamento.nome,
+      localidade: equipamento.localidade,
+      ip: equipamento.ip
+    });
+  }
 }

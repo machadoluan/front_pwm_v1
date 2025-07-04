@@ -1,4 +1,122 @@
 <div class="container">
+    <div class="informs">
+        <div class="totais">
+            <div class="card">
+                <h1>ONLINE</h1>
+                <div>
+                    <div class="online"></div>
+                    <span>{{onlineCount}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <h1>OFFLINE</h1>
+                <div>
+                    <div class="offline"></div>
+                    <span>{{offlineCount}}</span>
+                </div>
+            </div>
+            <div class="card">
+                <h1>NO-BREAKS</h1>
+                <div>
+                    <span>{{equipamentos.length}}</span>
+                </div>
+            </div>
+        </div>
 
-    <p>equipamentos works!</p>
+        <div class="content_equipamentos">
+            <h2>Equipamentos</h2>
+
+            <div class="filters">
+                <div class="filter">
+                    <div class="search">
+                        <i class=" fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Pesquisar Equipamento" [(ngModel)]="searchEquipamentos" />
+                    </div>
+                    <div class="online" [ngClass]="{ 'active': filterStatus === true }" (click)="toggleComSinal()">
+                        <div></div>
+                        <span>Online</span>
+                    </div>
+                    <div class="offline" [ngClass]="{ 'active': filterStatus === false }" (click)="toggleSemSinal()">
+                        <div></div>
+                        <span>Offline</span>
+                    </div>
+                </div>
+                <div class="dados">
+                    <span><strong>Atualização:</strong> agora</span>
+                </div>
+            </div>
+
+
+            <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed">
+                <div *ngFor="let equipamento of filteredEquipamentos" class="card" cdkDrag
+                    (click)="openEditDialog(equipamento)">
+                    <span class="nome">{{ equipamento.nome }}</span>
+                    <span class="status">
+                        <div [class.online]="equipamento.status === 'online'"
+                            [class.offline]="equipamento.status === 'offline'"></div>
+                        {{ equipamento.status }}
+                    </span>
+                    <span class="local"><strong>Local</strong>: {{ equipamento.endereco }}</span>
+                    <span class="atualizacao"><strong>Atualização</strong>: {{
+                        formatarData(equipamento.ultimaAtualizacao )}}</span>
+                </div>
+
+                <span style="font-size: 14px;" *ngIf="filteredEquipamentos.length === 0">
+                    Nenhum cliente encontrado
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="mapa" leaflet [leafletOptions]="options" [leafletLayers]="layers">
+        <div class="full">
+            <i class="fa-solid fa-expand"></i>
+        </div>
+    </div>
 </div>
+
+
+
+
+<p-dialog header="Editar informações" [(visible)]="display" modal="true" [style]="{ width: '350px' }"
+    (onHide)="onDialogHide()" class="dialog-cliente">
+
+    <form [formGroup]="editEquipamento" (ngSubmit)="salvarEquipamento()">
+        <div class="dialog-content">
+            <div class="form-group">
+                <label for="nome">Nome</label>
+                <input id="nome" type="text" pInputText formControlName="nome" placeholder="Digite o nome do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Contato</label>
+                <input id="nome" type="text" pInputText formControlName="contato" placeholder="Digite o nome do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="nome">IP</label>
+                <input id="nome" type="text" pInputText formControlName="ip" placeholder="Digite o nome do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Endereço</label>
+                <input id="nome" type="text" pInputText formControlName="endereco" placeholder="Digite o nome do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Status</label>
+                <input id="nome" type="text" pInputText formControlName="status" placeholder="Digite o nome do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Última atualização</label>
+                <input id="nome" type="text" pInputText formControlName="ultimaAtualizacao" placeholder="Digite o nome do cliente">
+            </div>
+
+            <!-- Botão Criar -->
+            <div class="form-group buttons">
+                <button type="submit" label="Criar" [disabled]="editEquipamento.invalid">Salvar equipamento </button>
+            </div>
+
+        </div>
+    </form>
+</p-dialog>

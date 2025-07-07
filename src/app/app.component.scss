@@ -1,6 +1,7 @@
 
 ::ng-deep .p-toast {
     width: 300px !important;
+    z-index: 999999;
 }
 
 ::ng-deep .p-toast-summary {

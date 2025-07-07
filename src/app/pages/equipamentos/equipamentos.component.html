@@ -1,3 +1,14 @@
+<div class="header-selecionado" [ngClass]="{'active': selectedEquipamentos.length != 0}">
+    <div class="infoms">
+        <i class="fa-solid fa-xmark" style="margin-right: 10px;" (click)="selectedEquipamentos = []"></i>
+        {{selectedEquipamentos.length}} selecionados
+    </div>
+    <div class="acoes">
+        <div class="delete" (click)="deletarEquipamentos(selectedEquipamentos)">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+    </div>
+</div>
 <div class="container">
     <div class="informs">
         <div class="totais">
@@ -16,7 +27,7 @@
                 </div>
             </div>
             <div class="card">
-                <h1>NO-BREAKS</h1>
+                <h1>EQUIPAMENTOS</h1>
                 <div>
                     <span>{{equipamentos.length}}</span>
                 </div>
@@ -40,16 +51,14 @@
                         <div></div>
                         <span>Offline</span>
                     </div>
-                </div>
-                <div class="dados">
-                    <span><strong>Atualização:</strong> agora</span>
+
                 </div>
             </div>
 
 
             <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed">
                 <div *ngFor="let equipamento of filteredEquipamentos" class="card" cdkDrag
-                    (click)="openEditDialog(equipamento)">
+                    (click)="selectOrOpenDialog(equipamento)" [ngClass]="{'selected': isSelecionado(equipamento)}">
                     <span class="nome">{{ equipamento.nome }}</span>
                     <span class="status">
                         <div [class.online]="equipamento.status === 'online'"
@@ -59,6 +68,10 @@
                     <span class="local"><strong>Local</strong>: {{ equipamento.endereco }}</span>
                     <span class="atualizacao"><strong>Atualização</strong>: {{
                         formatarData(equipamento.ultimaAtualizacao )}}</span>
+
+                    <div class="select" (click)="select(equipamento, $event)">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
                 </div>
 
                 <span style="font-size: 14px;" *ngIf="filteredEquipamentos.length === 0">
@@ -89,7 +102,8 @@
 
             <div class="form-group">
                 <label for="nome">Contato</label>
-                <input id="nome" type="text" pInputText formControlName="contato" placeholder="Digite o nome do cliente">
+                <input id="nome" type="text" pInputText formControlName="contato"
+                    placeholder="Digite o nome do cliente">
             </div>
 
             <div class="form-group">
@@ -99,7 +113,8 @@
 
             <div class="form-group">
                 <label for="nome">Endereço</label>
-                <input id="nome" type="text" pInputText formControlName="endereco" placeholder="Digite o nome do cliente">
+                <input id="nome" type="text" pInputText formControlName="endereco"
+                    placeholder="Digite o nome do cliente">
             </div>
 
             <div class="form-group">
@@ -109,7 +124,8 @@
 
             <div class="form-group">
                 <label for="nome">Última atualização</label>
-                <input id="nome" type="text" pInputText formControlName="ultimaAtualizacao" placeholder="Digite o nome do cliente">
+                <input id="nome" type="text" pInputText formControlName="ultimaAtualizacao"
+                    placeholder="Digite o nome do cliente">
             </div>
 
             <!-- Botão Criar -->

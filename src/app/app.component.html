@@ -1,3 +1,15 @@
-<app-header></app-header>
-<router-outlet />
+<ng-container *ngIf="showDefaultLayout(); else defaultLayout">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<ng-template #defaultLayout>
+  <app-header></app-header>
+  <router-outlet></router-outlet>
+</ng-template>
+
 <p-toast position="top-center"></p-toast>
+
+<p-confirmdialog
+  [style]="{ width: '450px' }"
+  rejectButtonStyleClass="p-button-text"
+></p-confirmdialog>

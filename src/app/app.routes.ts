@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { KeywordListComponent } from './pages/keyword-list/keyword-list.component';
 import { EquipamentosComponent } from './pages/equipamentos/equipamentos.component';
+import { MapaFullComponent } from './pages/mapa-full/mapa-full.component';
 
 export const routes: Routes = [
     {
@@ -10,5 +11,9 @@ export const routes: Routes = [
     {
         path: 'equipamentos',
         component: EquipamentosComponent
+    },
+    {
+        path: 'mapa',
+        component: MapaFullComponent
     },
 ];

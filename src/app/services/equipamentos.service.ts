@@ -31,5 +31,10 @@ export class EquipamentosService {
     return this.http.put(`${this.apiUrl}/${id}/endereco`, { endereco });
   }
 
+  deleteAll(ids: number[]){
+    return this.http.post(`${this.apiUrl}/deleteAll`, {
+      "ids": ids
+    })
+  }
 
 }

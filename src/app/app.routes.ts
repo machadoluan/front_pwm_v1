@@ -10,10 +10,10 @@ export const routes: Routes = [
     },
     {
         path: 'equipamentos',
-        component: EquipamentosComponent
+        loadComponent: () => import('./pages/equipamentos/equipamentos.component').then(m => m.EquipamentosComponent)
     },
     {
         path: 'mapa',
-        component: MapaFullComponent
+        loadComponent: () => import('./pages/mapa-full/mapa-full.component').then(m => m.MapaFullComponent)
     },
 ];

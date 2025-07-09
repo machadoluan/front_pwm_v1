@@ -22,7 +22,7 @@ export interface Equipamento {
   templateUrl: './mapa-full.component.html',
   styleUrl: './mapa-full.component.scss'
 })
-export class MapaFullComponent  implements OnInit{
+export class MapaFullComponent implements OnInit {
   equipamentos: Equipamento[] = [];
 
   constructor(private equipamentosService: EquipamentosService) { }
@@ -30,12 +30,12 @@ export class MapaFullComponent  implements OnInit{
   options = {
     layers: [
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '© OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap contributors'
       })
+
     ],
-    zoom: 4, // Brasil todo
-    center: L.latLng(-14.2350, -51.9253) // Centro aproximado do Brasil
+    zoom: 7, // Estado de Santa Catarina
+    center: L.latLng(-27.2423, -50.2189) // Centro aproximado de SC
   };
 
 
@@ -58,7 +58,7 @@ export class MapaFullComponent  implements OnInit{
           const cor = e.status === 'online' ? '#12BEA7' : '#FF4C4C'; // verde ou vermelho
 
           return L.circleMarker([e?.lat, e?.lon], {
-            radius: 10,
+            radius: 5,
             color: cor,
             fillColor: cor,
             fillOpacity: 1

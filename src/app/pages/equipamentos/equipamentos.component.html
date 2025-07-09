@@ -11,7 +11,7 @@
 </div>
 <div class="container">
     <div class="informs">
-        <div class="totais">
+        <div class="totais" [ngClass]="{'mapaOff': !ocultarMapa}">
             <div class="card">
                 <h1>ONLINE</h1>
                 <div>
@@ -32,31 +32,38 @@
                     <span>{{equipamentos.length}}</span>
                 </div>
             </div>
+            <div class="card">
+                <h1>ALERTAS HOJE</h1>
+                <div>
+                    <span>{{alertsHoje.length}}</span>
+                </div>
+            </div>
         </div>
 
         <div class="content_equipamentos">
-            <h2>Equipamentos</h2>
-
-            <div class="filters">
-                <div class="filter">
-                    <div class="search">
-                        <i class=" fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Pesquisar Equipamento" [(ngModel)]="searchEquipamentos" />
+            <div class="description-filters" [ngClass]="{'mapaOff': ocultarMapa}">
+                <h2>Equipamentos</h2>
+                <div class="filters">
+                    <div class="filter">
+                        <div class="search">
+                            <i class=" fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Pesquisar Equipamento" [(ngModel)]="searchEquipamentos" />
+                        </div>
+                        <div class="online" [ngClass]="{ 'active': filterStatus === true }" (click)="toggleComSinal()">
+                            <div></div>
+                            <span>Online</span>
+                        </div>
+                        <div class="offline" [ngClass]="{ 'active': filterStatus === false }"
+                            (click)="toggleSemSinal()">
+                            <div></div>
+                            <span>Offline</span>
+                        </div>
                     </div>
-                    <div class="online" [ngClass]="{ 'active': filterStatus === true }" (click)="toggleComSinal()">
-                        <div></div>
-                        <span>Online</span>
-                    </div>
-                    <div class="offline" [ngClass]="{ 'active': filterStatus === false }" (click)="toggleSemSinal()">
-                        <div></div>
-                        <span>Offline</span>
-                    </div>
-
                 </div>
             </div>
 
 
-            <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed">
+            <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed" [ngClass]="{'mapaOn': !ocultarMapa}">
                 <div *ngFor="let equipamento of filteredEquipamentos" class="card" cdkDrag
                     (click)="selectOrOpenDialog(equipamento)" [ngClass]="{'selected': isSelecionado(equipamento)}">
                     <span class="nome">{{ equipamento.nome }}</span>
@@ -80,10 +87,13 @@
             </div>
         </div>
     </div>
-    <div class="mapa" leaflet [leafletOptions]="options" [leafletLayers]="layers">
-        <div class="full">
+    <div class="ocultar-mapa" (click)="btnOcultarMapa()">
+        <i class="fa-solid" [ngClass]="{'fa-angle-left': ocultarMapa, 'fa-angle-right': !ocultarMapa}"></i>
+    </div>
+    <div class="mapa" leaflet [leafletOptions]="options" [leafletLayers]="layers" *ngIf="!ocultarMapa">
+        <a class="full" target="_blank" href="/mapa">
             <i class="fa-solid fa-expand"></i>
-        </div>
+        </a>
     </div>
 </div>
 

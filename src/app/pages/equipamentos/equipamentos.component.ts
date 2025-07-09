@@ -9,6 +9,8 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmationService } from 'primeng/api';
 import { ToastrService } from '../../services/toastr.service';
+import { AlertClientService } from '../../services/alert.service';
+import { RouterLink } from '@angular/router';
 
 export interface Equipamento {
   id: number
@@ -25,6 +27,7 @@ export interface Equipamento {
 
 @Component({
   selector: 'app-equipamentos',
+  standalone: true,
   imports: [LeafletModule, DragDropModule, CommonModule, FormsModule, ReactiveFormsModule, DialogModule, InputTextModule],
   templateUrl: './equipamentos.component.html',
   styleUrl: './equipamentos.component.scss'
@@ -37,10 +40,15 @@ export class EquipamentosComponent implements OnInit {
   selectedEquipamento: Equipamento | null = null;
   equipamentos: Equipamento[] = [];
   selectedEquipamentos: Equipamento[] = [];
+  intervalId: any;
+  alerts: any[] = [];
+  alertsHoje: any[] = []
 
+
+  ocultarMapa: boolean = true
 
   constructor(private equipamentosService: EquipamentosService, private fb: FormBuilder, private confirmationService: ConfirmationService,
-    private toastrService: ToastrService,
+    private toastrService: ToastrService, private alertClientService: AlertClientService
 
   ) {
     // Inicializar o formulário
@@ -59,6 +67,19 @@ export class EquipamentosComponent implements OnInit {
 
   ngOnInit() {
     this.loadEquipamentos();
+    this.loadAlerts()
+
+    this.intervalId = setInterval(() => {
+      this.loadEquipamentos();
+      this.loadAlerts()
+
+    }, 5000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
 
@@ -104,7 +125,8 @@ export class EquipamentosComponent implements OnInit {
       console.log('Termo em minusculas:', termoEmMinusculas);
       lista = lista.filter(c =>
         c.nome.toLowerCase().includes(termoEmMinusculas) ||
-        c.endereco?.toLowerCase().includes(termoEmMinusculas)
+        c.endereco?.toLowerCase().includes(termoEmMinusculas) || 
+        c.ip?.toLowerCase().includes(termoEmMinusculas) 
       );
     }
 
@@ -199,15 +221,31 @@ export class EquipamentosComponent implements OnInit {
           // Para adicionar um botão no popup do marcador, você pode incluir um botão HTML no conteúdo do bindPopup.
           // Exemplo: um botão "Editar" que chama uma função JavaScript (você pode adaptar para Angular conforme necessário).
           return L.circleMarker([e?.lat, e?.lon], {
-            radius: 10,
+            radius: 5,
             color: cor,
             fillColor: cor,
             fillOpacity: 1
           }).bindPopup(`
             <b>${e?.nome}</b><br>
+            <br>
+
             ${e?.endereco}<br>
-            Status: ${e?.status}<br>
-            <button onclick="window.open('https://www.google.com/maps?q=${e.lat},${e.lon}', '_blank')">
+            <br>
+
+             <span class="status" style="display: flex;
+                            gap: 10px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #003857;
+                            align-items: center;
+                            text-transform: uppercase;">
+                        <div class="${e.status === 'online' ? 'online' : 'offline'}"
+             style="width: 10px; height: 10px; border-radius: 50%; background-color: ${e.status === 'online' ? '#12BEA7' : '#FF4C4C'};">
+        </div>
+                        ${e?.status}
+                    </span>
+            <br>
+            <button style="padding: 5px 10px; border: none;  background-color: #003857; color: white; cursor: pointer; border-radius: 5px" onclick="window.open('https://www.google.com/maps?q=${e.lat},${e.lon}', '_blank')">
     Abrir Google Maps
   </button>
           `);
@@ -316,4 +354,34 @@ export class EquipamentosComponent implements OnInit {
     const idsOrdenados = this.filteredEquipamentos.map(eq => eq.id); // ou outro identificador único
     localStorage.setItem('ordemEquipamentos', JSON.stringify(idsOrdenados));
   }
+
+  btnOcultarMapa() {
+    this.ocultarMapa = !this.ocultarMapa
+  }
+
+  loadAlerts() {
+    const hoje = new Date();
+
+    this.alertClientService.getAlerts().subscribe({
+      next: (res: any) => {
+        this.alerts = res;
+
+        this.alertsHoje = this.alerts.filter((a: any) => {
+          const dataAlerta = parseDateBR(a.data);
+
+          return dataAlerta.getDate() === hoje.getDate() &&
+            dataAlerta.getMonth() === hoje.getMonth() &&
+            dataAlerta.getFullYear() === hoje.getFullYear();
+        });
+        console.log(this.alertsHoje)
+
+      }
+    });
+
+    function parseDateBR(dataStr: string): Date {
+      const [dia, mes, ano] = dataStr.split('/');
+      return new Date(+ano, +mes - 1, +dia);
+    }
+  }
+
 }

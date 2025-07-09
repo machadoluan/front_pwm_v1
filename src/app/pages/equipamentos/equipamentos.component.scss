@@ -26,10 +26,12 @@
     .infoms {
         align-items: center;
         display: flex;
+
         i {
             font-size: 24px;
             cursor: pointer;
         }
+
         font-size: 18px;
     }
 
@@ -63,6 +65,17 @@
         gap: 1rem;
     }
 
+    .ocultar-mapa {
+        border: 2px solid #003857;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-content: center;
+        cursor: pointer;
+
+    }
+
     .informs,
     .mapa {
         flex: 1;
@@ -80,6 +93,17 @@
             .totais {
                 display: flex;
                 gap: 2rem;
+                flex-wrap: wrap;
+                justify-content: center;
+
+                &.mapaOff {
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: .5rem;
+
+                }
+
+
 
                 // Media queries para responsividade dos cards de totais
                 @media (max-width: 768px) {
@@ -121,7 +145,25 @@
                             height: 15px;
                             border-radius: 50%;
                             background-color: #12BEA7;
+                            box-shadow: 0 0 0 0 rgba(18, 190, 167, 0.7);
+                            animation: pulse 1.5s infinite;
+
+                            @keyframes pulse {
+                                0% {
+                                    box-shadow: 0 0 0 0 rgba(18, 190, 167, 0.7);
+                                }
+
+                                70% {
+                                    box-shadow: 0 0 0 10px rgba(18, 190, 167, 0);
+                                }
+
+                                100% {
+                                    box-shadow: 0 0 0 0 rgba(18, 190, 167, 0);
+                                }
+                            }
                         }
+
+
 
                         .offline {
                             width: 15px;
@@ -146,10 +188,23 @@
                 gap: 2rem;
                 height: calc(100% - 170px);
 
+                .description-filters {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: start;
+                    gap: 40px;
+                    justify-content: center;
+                    align-items: center;
+
+                    &.mapaOff {}
+                }
+
                 .filters {
                     display: flex;
                     justify-content: space-between;
                     gap: 1rem;
+
+
 
                     // Media queries para responsividade dos filtros
                     @media (max-width: 768px) {
@@ -243,14 +298,19 @@
 
                 .equipamentos {
                     display: grid;
-                    grid-template-columns: repeat(3, 1fr);
+                    grid-template-columns: repeat(5, minmax(310px, 1fr));
                     gap: 1rem;
                     overflow-y: auto;
                     height: 100%;
                     align-items: start;
+                    justify-content: center;
                     overflow-x: hidden;
                     padding-right: 10px;
                     padding-top: 10px;
+
+                    &.mapaOn {
+                        grid-template-columns: repeat(4, 1fr);
+                    }
 
                     // Media queries para responsividade do grid
                     @media (max-width: 1200px) {
@@ -377,6 +437,21 @@
             border-radius: 15px;
             background-color: white;
             width: 100%;
+
+            .full {
+                z-index: 99999;
+                width: 30px;
+                height: 30px;
+                background-color: #003857;
+                color: white;
+                border-radius: 50%;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                display: grid;
+                place-content: center;
+                cursor: pointer;
+            }
         }
     }
 }

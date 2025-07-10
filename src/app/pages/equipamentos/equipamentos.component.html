@@ -63,7 +63,8 @@
             </div>
 
 
-            <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed" [ngClass]="{'mapaOn': !ocultarMapa}">
+            <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed"
+                [ngClass]="{'mapaOn': !ocultarMapa}">
                 <div *ngFor="let equipamento of filteredEquipamentos" class="card" cdkDrag
                     (click)="selectOrOpenDialog(equipamento)" [ngClass]="{'selected': isSelecionado(equipamento)}">
                     <span class="nome">{{ equipamento.nome }}</span>
@@ -136,6 +137,12 @@
                 <label for="nome">Última atualização</label>
                 <input id="nome" type="text" pInputText formControlName="ultimaAtualizacao"
                     placeholder="Digite o nome do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Observação</label>
+                <textarea rows="5" cols="30" placeholder="Anote alguma Observação" pTextarea [autoResize]="true"
+                    formControlName="observacao"></textarea>
             </div>
 
             <!-- Botão Criar -->

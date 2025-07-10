@@ -27,11 +27,11 @@ export class EquipamentosService {
   }
 
 
-  editarEquipamento(id: number, endereco: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}/endereco`, { endereco });
+  editarEquipamento(id: number, dadosNovos: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/endereco`, { dadosNovos });
   }
 
-  deleteAll(ids: number[]){
+  deleteAll(ids: number[]) {
     return this.http.post(`${this.apiUrl}/deleteAll`, {
       "ids": ids
     })

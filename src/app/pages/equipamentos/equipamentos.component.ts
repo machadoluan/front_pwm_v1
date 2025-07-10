@@ -11,6 +11,7 @@ import { ConfirmationService } from 'primeng/api';
 import { ToastrService } from '../../services/toastr.service';
 import { AlertClientService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
+import { TextareaModule } from 'primeng/textarea';
 
 export interface Equipamento {
   id: number
@@ -22,13 +23,15 @@ export interface Equipamento {
   status: string;
   lat: number;
   lon: number;
+  observacao: string;
+  contrato: boolean
 }
 
 
 @Component({
   selector: 'app-equipamentos',
   standalone: true,
-  imports: [LeafletModule, DragDropModule, CommonModule, FormsModule, ReactiveFormsModule, DialogModule, InputTextModule],
+  imports: [LeafletModule, DragDropModule, CommonModule, FormsModule, ReactiveFormsModule, DialogModule, InputTextModule, TextareaModule],
   templateUrl: './equipamentos.component.html',
   styleUrl: './equipamentos.component.scss'
 })
@@ -42,7 +45,8 @@ export class EquipamentosComponent implements OnInit {
   selectedEquipamentos: Equipamento[] = [];
   intervalId: any;
   alerts: any[] = [];
-  alertsHoje: any[] = []
+  alertsHoje: any[] = [];
+  equipamentosContratos: any[] = [];
 
 
   ocultarMapa: boolean = true
@@ -60,7 +64,8 @@ export class EquipamentosComponent implements OnInit {
       ultimaAtualizacao: [{ value: '', disabled: true }],
       status: [{ value: '', disabled: true }],
       lat: [null],
-      lon: [null]
+      lon: [null],
+      observacao: ['']
     });
 
   }
@@ -125,8 +130,8 @@ export class EquipamentosComponent implements OnInit {
       console.log('Termo em minusculas:', termoEmMinusculas);
       lista = lista.filter(c =>
         c.nome.toLowerCase().includes(termoEmMinusculas) ||
-        c.endereco?.toLowerCase().includes(termoEmMinusculas) || 
-        c.ip?.toLowerCase().includes(termoEmMinusculas) 
+        c.endereco?.toLowerCase().includes(termoEmMinusculas) ||
+        c.ip?.toLowerCase().includes(termoEmMinusculas)
       );
     }
 
@@ -172,7 +177,12 @@ export class EquipamentosComponent implements OnInit {
       const endereco = this.editEquipamento.value.endereco;
       const id = (this.selectedEquipamento as any).id;
 
-      this.equipamentosService.editarEquipamento(id, endereco).subscribe(response => {
+      const dados = {
+        endereco: this.editEquipamento.value.endereco,
+        observacao: this.editEquipamento.value.observacao
+      }
+
+      this.equipamentosService.editarEquipamento(id, dados).subscribe(response => {
         console.log('Equipamento atualizado com sucesso:', response);
         this.loadEquipamentos();
 
@@ -195,7 +205,8 @@ export class EquipamentosComponent implements OnInit {
       ultimaAtualizacao: this.formatarData(equipamento.ultimaAtualizacao),
       status: equipamento.status,
       lat: equipamento.lat,
-      lon: equipamento.lon
+      lon: equipamento.lon,
+      observacao: equipamento.observacao
     });
   }
 
@@ -203,6 +214,9 @@ export class EquipamentosComponent implements OnInit {
     this.equipamentosService.getList().subscribe(data => {
       this.equipamentos = data;
       console.log('Equipamentos carregados:', this.equipamentos);
+      this.equipamentosContratos = this.equipamentos.filter(eq => eq.contrato === true);
+
+      console.log('contratos:', this.equipamentosContratos)
 
       const ordemSalva = localStorage.getItem('ordemEquipamentos');
       if (ordemSalva) {

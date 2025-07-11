@@ -50,7 +50,9 @@ export class EquipamentosComponent implements OnInit {
   alertsHoje: any[] = [];
   equipamentosContratos: any[] = [];
   emBypass: any[] = [];
-  filterContrato: boolean = false
+  filterContrato: boolean = false;
+  displayAlerta: boolean = false;
+  report: any[] = [];
 
   ocultarMapa: boolean = true
 
@@ -110,8 +112,6 @@ export class EquipamentosComponent implements OnInit {
 
 
   layers: L.Layer[] = [];
-
-
 
 
 
@@ -424,6 +424,22 @@ export class EquipamentosComponent implements OnInit {
         console.error(err)
       }
     })
+  }
+
+  loadReport() {
+    this.alertClientService.getReports().subscribe({
+      next: (res) => {
+        this.report = res;
+      },
+      error: (err) => {
+        console.error(err)
+      },
+    })
+  }
+
+  openAlerts() {
+    this.displayAlerta = true
+    this.loadReport()
   }
 
 }

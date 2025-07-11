@@ -32,7 +32,7 @@
                     <span>{{equipamentos.length}}</span>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" style="cursor: pointer;" (click)="openAlerts()">
                 <h1>ALERTAS HOJE</h1>
                 <div>
                     <span>{{alertsHoje.length}}</span>
@@ -69,7 +69,7 @@
                         <div class=" btn contrato" (click)="toggleContrato()"
                             [ngClass]="{ 'active': filterContrato === true }">
                             🤝
-                            <span>Contratos</span>
+                            <span>Contratos {{filteredEquipamentos.length}}</span>
                         </div>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
                     formControlName="observacao"></textarea>
             </div>
             <div class="flex items-center">
-                <p-checkbox inputId="ingredient1" name="pizza" formControlName="checkedContrato" binary="true"/>
+                <p-checkbox inputId="ingredient1" name="pizza" formControlName="checkedContrato" binary="true" />
                 <label for=" ingredient1" class="ml-2"> Contrato? </label>
             </div>
 
@@ -195,6 +195,49 @@
             Nenhum cliente encontrado
         </span>
     </div>
+
+
+</p-dialog>
+
+<p-dialog header="ALERTAS HOJE" [(visible)]="displayAlerta" modal="true" [style]="{ width: '350px' }"
+    (onHide)="onDialogHide()" styleClass="dialog-alerts">
+
+    <div class="content">
+        <div cdkDropList class="equipamentos">
+            <div *ngFor="let equipamento of alertsHoje" class="card"
+                [ngClass]="{'selected': isSelecionado(equipamento)}">
+
+                <span class="nome"> {{ equipamento.nomeSistema }}</span>
+                <span class="ip"><strong>IP</strong>: {{ equipamento.ip }}</span>
+                <span class="status"><strong>Status</strong>: {{ equipamento.status }}</span>
+                <span class="data"><strong>Data</strong>: {{ equipamento.data }}</span>
+                <span class="hora"><strong>Hora</strong>: {{ equipamento.hora }}</span>
+                <span class="aviso"><strong>Aviso</strong>: {{ equipamento.aviso }}</span>
+                <span class="localidade"><strong>Localidade</strong>: {{ equipamento.localidade }}</span>
+                <span class="contato"><strong>Contato</strong>: {{ equipamento.contato }}</span>
+
+            </div>
+
+
+            <span style="font-size: 14px;" *ngIf="filteredEquipamentos.length === 0">
+                Nenhum cliente encontrado
+            </span>
+        </div>
+
+        <div class="reports">
+            <h2>Relatorios de alertas</h2>
+
+            <div class="clientes">
+
+            </div>
+
+            <div class="ocultar">
+                <i class="fa-solid" [ngClass]="{'fa-angle-left': ocultarMapa, 'fa-angle-right': !ocultarMapa}"></i>
+            </div>
+        </div>
+
+    </div>
+
 
 
 </p-dialog>

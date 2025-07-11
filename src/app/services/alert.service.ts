@@ -18,19 +18,21 @@ export interface Alert {
 
 @Injectable({ providedIn: 'root' })
 export class AlertClientService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  private apiUrl = `${environment.apiUrl}`
+  private apiUrl = `${environment.apiUrl}/alerts`
 
 
   getAlerts(): Observable<Alert[]> {
-    return this.http.get<Alert[]>(`${this.apiUrl}/alerts`);
+    return this.http.get<Alert[]>(`${this.apiUrl}`);
   }
 
-  
+  getReports(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/report`)
+  }
 
   addRemetente(remetente: string): Observable<string> {
     return this.http.post<string>(`${this.apiUrl}/remetentes`, { remetente });
   }
-  
+
 }

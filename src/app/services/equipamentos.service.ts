@@ -26,6 +26,10 @@ export class EquipamentosService {
     return this.http.get<Equipamento[]>(this.apiUrl)
   }
 
+  getListAtivos(): Observable<any> {
+    return this.http.get<Equipamento[]>(`${this.apiUrl}/criticos-ativos`)
+  }
+
 
   editarEquipamento(id: number, dadosNovos: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/endereco`, { dadosNovos });

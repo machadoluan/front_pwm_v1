@@ -38,6 +38,13 @@
                     <span>{{alertsHoje.length}}</span>
                 </div>
             </div>
+            <div class="card" style="cursor: pointer;" (click)="displayBypass = true">
+                <h1>EM BYPASS</h1>
+                <div>
+                    <img src="assets/alerta.png" alt="" style="width: 30px; height: auto;">
+                    <span>{{emBypass.length}}</span>
+                </div>
+            </div>
         </div>
 
         <div class="content_equipamentos">
@@ -49,14 +56,20 @@
                             <i class=" fa-solid fa-magnifying-glass"></i>
                             <input type="text" placeholder="Pesquisar Equipamento" [(ngModel)]="searchEquipamentos" />
                         </div>
-                        <div class="online" [ngClass]="{ 'active': filterStatus === true }" (click)="toggleComSinal()">
+                        <div class="btn online" [ngClass]="{ 'active': filterStatus === true }"
+                            (click)="toggleComSinal()">
                             <div></div>
                             <span>Online</span>
                         </div>
-                        <div class="offline" [ngClass]="{ 'active': filterStatus === false }"
+                        <div class=" btn offline" [ngClass]="{ 'active': filterStatus === false }"
                             (click)="toggleSemSinal()">
                             <div></div>
                             <span>Offline</span>
+                        </div>
+                        <div class=" btn contrato" (click)="toggleContrato()"
+                            [ngClass]="{ 'active': filterContrato === true }">
+                            🤝
+                            <span>Contratos</span>
                         </div>
                     </div>
                 </div>
@@ -66,7 +79,8 @@
             <div cdkDropList class="equipamentos" (cdkDropListDropped)="drop($event)" cdkDropListOrientation="mixed"
                 [ngClass]="{'mapaOn': !ocultarMapa}">
                 <div *ngFor="let equipamento of filteredEquipamentos" class="card" cdkDrag
-                    (click)="selectOrOpenDialog(equipamento)" [ngClass]="{'selected': isSelecionado(equipamento)}">
+                    (click)="selectOrOpenDialog(equipamento)"
+                    [ngClass]="{'selected': isSelecionado(equipamento), 'contrato': equipamento.contrato === true}">
                     <span class="nome">{{ equipamento.nome }}</span>
                     <span class="status">
                         <div [class.online]="equipamento.status === 'online'"
@@ -79,6 +93,10 @@
 
                     <div class="select" (click)="select(equipamento, $event)">
                         <i class="fa-solid fa-check"></i>
+                    </div>
+
+                    <div class="contrato-icon" *ngIf="equipamento.contrato === true">
+                        📑
                     </div>
                 </div>
 
@@ -152,4 +170,31 @@
 
         </div>
     </form>
+</p-dialog>
+
+<p-dialog header="NO-BRAKS EM BYPASS" [(visible)]="displayBypass" modal="true" [style]="{ width: '350px' }"
+    (onHide)="onDialogHide()" styleClass="dialog-bypass">
+
+
+    <div cdkDropList class="equipamentos">
+        <div *ngFor="let equipamento of emBypass" class="card" [ngClass]="{'selected': isSelecionado(equipamento)}">
+
+            <span class="nome"> {{ equipamento.nomeSistema }}</span>
+            <span class="ip"><strong>IP</strong>: {{ equipamento.ip }}</span>
+            <span class="status"><strong>Status</strong>: {{ equipamento.status }}</span>
+            <span class="data"><strong>Data</strong>: {{ equipamento.data }}</span>
+            <span class="hora"><strong>Hora</strong>: {{ equipamento.hora }}</span>
+            <span class="aviso"><strong>Aviso</strong>: {{ equipamento.aviso }}</span>
+            <span class="localidade"><strong>Localidade</strong>: {{ equipamento.localidade }}</span>
+            <span class="contato"><strong>Contato</strong>: {{ equipamento.contato }}</span>
+
+        </div>
+
+
+        <span style="font-size: 14px;" *ngIf="filteredEquipamentos.length === 0">
+            Nenhum cliente encontrado
+        </span>
+    </div>
+
+
 </p-dialog>

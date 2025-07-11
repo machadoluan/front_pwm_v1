@@ -27,10 +27,16 @@ export class MapaFullComponent implements OnInit {
 
   constructor(private equipamentosService: EquipamentosService) { }
 
+  mapboxToken = 'pk.eyJ1IjoibWFjaGFkb2x1YW5qcyIsImEiOiJjbWN5M2NqZ3gwaWZrMmpvanlqcjZoZGpxIn0.BM03_t6aM2hisfSYEZPUWQ';
+  mapboxStyle = 'streets-v12'; // Pode usar também 'streets-v12', 'navigation-day-v1', etc.
+
   options = {
     layers: [
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+
+      L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/${this.mapboxStyle}/tiles/{z}/{x}/{y}?access_token=${this.mapboxToken}`, {
+        tileSize: 512,
+        zoomOffset: -1,
+        attribution: '© <a href="https://www.mapbox.com/">Mapbox</a>',
       })
 
     ],

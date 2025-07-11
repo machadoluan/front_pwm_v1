@@ -39,6 +39,7 @@ export class EquipamentosComponent implements OnInit {
   searchEquipamentos: string = '';
   filterStatus: boolean | null = null;
   display: boolean = false;
+  displayBypass: boolean = false;
   editEquipamento: FormGroup
   selectedEquipamento: Equipamento | null = null;
   equipamentos: Equipamento[] = [];
@@ -47,7 +48,8 @@ export class EquipamentosComponent implements OnInit {
   alerts: any[] = [];
   alertsHoje: any[] = [];
   equipamentosContratos: any[] = [];
-
+  emBypass: any[] = [];
+  filterContrato: boolean = false
 
   ocultarMapa: boolean = true
 
@@ -72,11 +74,13 @@ export class EquipamentosComponent implements OnInit {
 
   ngOnInit() {
     this.loadEquipamentos();
-    this.loadAlerts()
+    this.loadAlerts();
+    this.loadBypass()
 
     this.intervalId = setInterval(() => {
       this.loadEquipamentos();
       this.loadAlerts()
+      this.loadBypass()
 
     }, 5000);
   }
@@ -87,13 +91,15 @@ export class EquipamentosComponent implements OnInit {
     }
   }
 
-
+  mapboxToken = 'pk.eyJ1IjoibWFjaGFkb2x1YW5qcyIsImEiOiJjbWN5M2NqZ3gwaWZrMmpvanlqcjZoZGpxIn0.BM03_t6aM2hisfSYEZPUWQ';
+  mapboxStyle = 'streets-v12'; // Pode usar também 'streets-v12', 'navigation-day-v1', etc.
 
   options = {
     layers: [
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '© OpenStreetMap contributors'
+      L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/${this.mapboxStyle}/tiles/{z}/{x}/{y}?access_token=${this.mapboxToken}`, {
+        tileSize: 512,
+        zoomOffset: -1,
+        attribution: '© <a href="https://www.mapbox.com/">Mapbox</a>',
       })
     ],
     zoom: 7, // Estado de Santa Catarina
@@ -125,6 +131,10 @@ export class EquipamentosComponent implements OnInit {
       });
     }
 
+    if (this.filterContrato != null) {
+      lista = lista.filter(c => c.contrato === this.filterContrato);
+    }
+
     if (this.searchEquipamentos && this.searchEquipamentos.trim() !== '') {
       const termoEmMinusculas = this.searchEquipamentos.trim().toLowerCase();
       console.log('Termo em minusculas:', termoEmMinusculas);
@@ -144,6 +154,9 @@ export class EquipamentosComponent implements OnInit {
     this.atualizarMapa();
   }
 
+  toggleContrato() {
+    this.filterContrato = this.filterContrato === false ? true : false;
+  }
 
   toggleComSinal() {
     this.filterStatus = this.filterStatus === true ? null : true;
@@ -396,6 +409,17 @@ export class EquipamentosComponent implements OnInit {
       const [dia, mes, ano] = dataStr.split('/');
       return new Date(+ano, +mes - 1, +dia);
     }
+  }
+
+  loadBypass() {
+    this.equipamentosService.getListAtivos().subscribe({
+      next: (res) => {
+        this.emBypass = res
+      },
+      error: (err) => {
+        console.error(err)
+      }
+    })
   }
 
 }

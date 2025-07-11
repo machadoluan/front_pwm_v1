@@ -94,10 +94,6 @@
                     <div class="select" (click)="select(equipamento, $event)">
                         <i class="fa-solid fa-check"></i>
                     </div>
-
-                    <div class="contrato-icon" *ngIf="equipamento.contrato === true">
-                        📑
-                    </div>
                 </div>
 
                 <span style="font-size: 14px;" *ngIf="filteredEquipamentos.length === 0">
@@ -161,6 +157,10 @@
                 <label for="nome">Observação</label>
                 <textarea rows="5" cols="30" placeholder="Anote alguma Observação" pTextarea [autoResize]="true"
                     formControlName="observacao"></textarea>
+            </div>
+            <div class="flex items-center">
+                <p-checkbox inputId="ingredient1" name="pizza" formControlName="checkedContrato" binary="true"/>
+                <label for=" ingredient1" class="ml-2"> Contrato? </label>
             </div>
 
             <!-- Botão Criar -->

@@ -12,6 +12,7 @@ import { ToastrService } from '../../services/toastr.service';
 import { AlertClientService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { TextareaModule } from 'primeng/textarea';
+import { CheckboxModule } from 'primeng/checkbox';
 
 export interface Equipamento {
   id: number
@@ -31,7 +32,7 @@ export interface Equipamento {
 @Component({
   selector: 'app-equipamentos',
   standalone: true,
-  imports: [LeafletModule, DragDropModule, CommonModule, FormsModule, ReactiveFormsModule, DialogModule, InputTextModule, TextareaModule],
+  imports: [LeafletModule, DragDropModule, CommonModule, FormsModule, ReactiveFormsModule, DialogModule, InputTextModule, TextareaModule, CheckboxModule],
   templateUrl: './equipamentos.component.html',
   styleUrl: './equipamentos.component.scss'
 })
@@ -67,7 +68,8 @@ export class EquipamentosComponent implements OnInit {
       status: [{ value: '', disabled: true }],
       lat: [null],
       lon: [null],
-      observacao: ['']
+      observacao: [''],
+      checkedContrato: [false]
     });
 
   }
@@ -192,7 +194,8 @@ export class EquipamentosComponent implements OnInit {
 
       const dados = {
         endereco: this.editEquipamento.value.endereco,
-        observacao: this.editEquipamento.value.observacao
+        observacao: this.editEquipamento.value.observacao,
+        contrato: this.editEquipamento.value.checkedContrato
       }
 
       this.equipamentosService.editarEquipamento(id, dados).subscribe(response => {
@@ -219,7 +222,8 @@ export class EquipamentosComponent implements OnInit {
       status: equipamento.status,
       lat: equipamento.lat,
       lon: equipamento.lon,
-      observacao: equipamento.observacao
+      observacao: equipamento.observacao,
+      checkedContrato: equipamento.contrato
     });
   }
 
